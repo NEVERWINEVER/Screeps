@@ -1,6 +1,7 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var roleUpgrader = require('role.upgrader');
 
 module.exports.loop = function () {
 
@@ -20,19 +21,22 @@ module.exports.loop = function () {
     var upgrader = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
     console.log('upgrader: ' + upgrader.length);
 
+    var repair = _.filter(Game.creeps, (creep) => creep.memory.role == 'repair');
+    console.log('upgrader: ' + repair.length);
+
     if(harvesters.length < 2) {
         var newName = Game.spawns['Spawn1'].createCreep([WORK,CARRY,MOVE], undefined, {role: 'harvester'});
         console.log('Spawning new harvester: ' + newName);
     }
-    if(upgrader.length < 1 && harvesters.length == 2) {
+    if(upgrader.length < 1 && harvesters.length == 1) {
         var newName = Game.spawns['Spawn1'].createCreep([WORK,CARRY,MOVE], undefined, {role: 'upgrader'});
         console.log('Spawning new upgrader: ' + newName);
     }
-    if(builder.length < 1 && harvesters.length == 2) {
+    if(builder.length < 1 && harvesters.length == 1 && upgrader.length == 1) {
         var newName = Game.spawns['Spawn1'].createCreep([WORK,CARRY,MOVE], undefined, {role: 'builder'});
         console.log('Spawning new builder: ' + newName);
     }
-
+  
 
     if(Game.spawns['Spawn1'].spawning) {
         var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
@@ -40,7 +44,7 @@ module.exports.loop = function () {
             '🛠️' + spawningCreep.memory.role,
             Game.spawns['Spawn1'].pos.x + 1,
             Game.spawns['Spawn1'].pos.y,
-            {align: 'top', opacity: 0.8});
+            {align: 'right', opacity: 0.8});
     }
 
     for(var name in Game.creeps) {
@@ -54,6 +58,8 @@ module.exports.loop = function () {
          if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
         }
+        if(creep.memory.role == 'repair') {
+           roleRepair.run(creep);
     }
 }
- 
+}
